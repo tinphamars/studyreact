@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import ProductList from '../../components/ProductList/ProductList';
 import ProductItem from '../../components/ProductItem/ProductItem';
 import callApi from './../../utils/apiCaller';
-import { actFactFetchProductsRequest } from './../../actions/Index';
+import { actFactFetchProductsRequest, actDEleteProductsRequest } from './../../actions/Index';
 import { connect } from 'react-redux';
 
 class ProductListPage extends Component {
@@ -19,29 +19,9 @@ class ProductListPage extends Component {
     }
 
     onDelete = (id) => {
-        var { products } = this.state
-        callApi(`products/${id}`, 'delete', null).then(resp => {
-            if (resp.status === 200) {
-                var index = this.findIndex(products, id)
-                if (index !== -1) {
-                    products.splice(index, 1)
-                    this.setState({
-                        products
-                    })
-                }
-            }
-        })
+        this.props.onDeleteProducts(id)
     }
 
-    findIndex = (products, id) => {
-        var result = -1;
-        products.forEach((element, index) => {
-            if (element.id === id) {
-                result = index
-            }
-        });
-        return result
-    }
 
     render() {
         // console.log(this.props)
@@ -81,6 +61,9 @@ const mapDispatchToProps = (dispatch) => {
     return {
         fetchAllProduts: () => {
             dispatch(actFactFetchProductsRequest())
+        },
+        onDeleteProducts: (id) => {
+            dispatch(actDEleteProductsRequest(id))
         }
     }
 }
