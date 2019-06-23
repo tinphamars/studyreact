@@ -32,3 +32,46 @@ export const actDEleteProductsRequest = (id) => {
         })
     }
 }
+
+export const actAddProducts = (products) => {
+    return {
+        type: Types.ADD_PRODUCT,
+        products
+    }
+}
+
+export const actAddProductsRequest = (products) => {
+    return (dispatch) => {
+        return callApi('products', 'POST', products).then(reps => {
+            dispatch(actAddProducts(reps.data))
+        })
+    }
+}
+
+export const actGetProducts = (product) => {
+    return {
+        type: Types.EDIT_PRODUCT,
+        product
+    }
+}
+export const actGetProductsRequest = (id) => {
+    return (dispatch) => {
+        return callApi(`products/${id}`, 'GET', null).then(resp => {
+            dispatch(actGetProducts(resp.data))
+        })
+    }
+}
+
+export const actUpdateProduct = (product) => {
+    return {
+        type: Types.UPDATE_PRODUCT,
+        product
+    }
+}
+export const actUpdateProductRequest = (product) => {
+    return (dispatch) => {
+        return callApi(`products/${product.id}`, 'PUT', product).then(resp => {
+            dispatch(actUpdateProduct(resp))
+        })
+    }
+}

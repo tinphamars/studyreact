@@ -1,7 +1,10 @@
 import React, { Component } from 'react'
 import callApi from './../../utils/apiCaller';
+import { actAddProductsRequest, actGetProductsRequest, actUpdateProductRequest } from './../../actions/Index';
+import { connect } from 'react-redux';
+import itemEditing from '../../reducers/itemEditing';
 
-export default class ProductActionPage extends Component {
+class ProductActionPage extends Component {
 
     constructor(props) {
         super(props);
@@ -28,23 +31,17 @@ export default class ProductActionPage extends Component {
         e.preventDefault();
         var { id, txtName, txtPrice, chkbStatus } = this.state
         var { history } = this.props
+        var products = {
+            id: id,
+            name: txtName,
+            price: txtPrice,
+            status: chkbStatus
+        }
         if (id) {
-            callApi(`products/${id}`, 'PUT', {
-                id: id,
-                name: txtName,
-                price: txtPrice,
-                status: chkbStatus,
-            }).then(resp => {
-                history.goBack()
-            })
+            this.props.onUpdateProduct(products)
         } else {
-            callApi('products', 'POST', {
-                name: txtName,
-                price: txtPrice,
-                status: chkbStatus,
-            }).then(resp => {
-                history.push('/products')
-            })
+            this.props.onAddProducts(products)
+            history.goBack()
         }
 
     }
@@ -53,18 +50,21 @@ export default class ProductActionPage extends Component {
         var { match } = this.props
         if (match) {
             var id = match.params.id;
-            callApi(`products/${id}`, 'get', null).then(resp => {
-                let data = resp.data
-                this.setState({
-                    id: data.id,
-                    txtName: data.name,
-                    txtPrice: data.price,
-                    chkbStatus: data.status
-                })
-            })
+            this.props.onEditProduct(id)
         }
     }
 
+    componentWillReceiveProps(nextProps) {
+        if (nextProps && nextProps.itemEditing) {
+            var { itemEditing } = nextProps
+            this.setState({
+                id: itemEditing.id,
+                txtName: itemEditing.name,
+                txtPrice: itemEditing.price,
+                chkbStatus: itemEditing.status
+            })
+        }
+    }
 
     render() {
         var { txtName, txtPrice, chkbStatus } = this.state;
@@ -109,3 +109,25 @@ export default class ProductActionPage extends Component {
         );
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        itemEditing: state.itemEditing
+    }
+}
+
+const mapDispatchToprops = (dispatch) => {
+    return {
+        onAddProducts: (products) => {
+            dispatch(actAddProductsRequest(products))
+        },
+        onEditProduct: (id) => {
+            dispatch(actGetProductsRequest(id))
+        },
+        onUpdateProduct: (product) => {
+            dispatch(actUpdateProductRequest(product))
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToprops)(ProductActionPage)

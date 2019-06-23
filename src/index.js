@@ -9,10 +9,12 @@ import { createStore, applyMiddleware } from 'redux';
 import appReducer from './reducers/index';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
+import { composeWithDevTools } from 'redux-devtools-extension';
 
 const store = createStore(
     appReducer,
-    applyMiddleware(thunk)
+    composeWithDevTools(applyMiddleware(thunk))
+    // applyMiddleware(thunk)
     // window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(applyMiddleware(thunk)),
 );
 

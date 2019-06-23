@@ -1,18 +1,10 @@
 import React, { Component } from 'react'
 import ProductList from '../../components/ProductList/ProductList';
 import ProductItem from '../../components/ProductItem/ProductItem';
-import callApi from './../../utils/apiCaller';
 import { actFactFetchProductsRequest, actDEleteProductsRequest } from './../../actions/Index';
 import { connect } from 'react-redux';
 
 class ProductListPage extends Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            products: []
-        };
-    }
 
     componentDidMount() {
         this.props.fetchAllProduts()
